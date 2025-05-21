@@ -3,6 +3,7 @@ import torch
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 from snntorch import utils
+from snntorch import spikegen
 
 batch_size = 128 #это партия данных
 data_path = './data/mnist'  # путь куда будут скачиваться данные
@@ -30,5 +31,12 @@ train_loader = DataLoader(mnist_train, batch_size=batch_size, shuffle=True)
 dataiter = iter(train_loader)
 images, labels = next(dataiter)
 
-print(images.shape)  # torch.Size([128, 1, 28, 28])
-print(labels.shape)  # torch.Size([128])
+# Iterate through minibatches
+num_steps = 10
+data = iter(train_loader)
+data_it, targets_it = next(data)
+
+# Spiking Data
+spike_data = spikegen.rate(data_it, num_steps=num_steps)
+
+print(spike_data.size())
