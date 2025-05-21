@@ -4,6 +4,10 @@ from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 from snntorch import utils
 from snntorch import spikegen
+import matplotlib.pyplot as plt
+import snntorch.spikeplot as splt
+from IPython.display import HTML
+
 
 batch_size = 128 #это партия данных
 data_path = './data/mnist'  # путь куда будут скачиваться данные
@@ -32,7 +36,7 @@ dataiter = iter(train_loader)
 images, labels = next(dataiter)
 
 # Iterate through minibatches
-num_steps = 10
+num_steps = 100
 data = iter(train_loader)
 data_it, targets_it = next(data)
 
@@ -40,3 +44,35 @@ data_it, targets_it = next(data)
 spike_data = spikegen.rate(data_it, num_steps=num_steps)
 
 print(spike_data.size())
+
+spike_data_sample = spike_data[:, 0, 0]
+print(spike_data_sample.size()) 
+
+fig, ax = plt.subplots()
+anim = splt.animator(spike_data_sample, fig, ax)
+anim.save("spike_mnist_test.gif")
+
+spike_data = spikegen.rate(data_it, num_steps=num_steps, gain=0.25)
+
+spike_data_sample2 = spike_data[:, 0, 0]
+fig, ax = plt.subplots()
+anim = splt.animator(spike_data_sample2, fig, ax)
+anim.save("spike_mnist_test_gain025.gif")
+print(f"The corresponding target is: {targets_it[0]}")
+
+
+plt.figure(facecolor="w")
+
+# Без изменения (частота 100%)
+plt.subplot(1,2,1)
+plt.imshow(spike_data_sample.mean(axis=0).reshape((28,-1)).cpu(), cmap='binary')
+plt.axis('off')
+plt.title('Gain = 1')
+
+# С пониженной частотой (25%)
+plt.subplot(1,2,2)
+plt.imshow(spike_data_sample2.mean(axis=0).reshape((28,-1)).cpu(), cmap='binary')
+plt.axis('off')
+plt.title('Gain = 0.25')
+
+plt.show()
