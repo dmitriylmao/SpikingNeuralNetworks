@@ -76,3 +76,43 @@ plt.axis('off')
 plt.title('Gain = 0.25')
 
 plt.show()
+
+spike_data_sample2 = spike_data_sample2.reshape((num_steps, -1))
+
+# raster plot
+fig = plt.figure(facecolor="w", figsize=(10, 5))
+ax = fig.add_subplot(111)
+splt.raster(spike_data_sample2, ax, s=1.5, c="black")
+
+plt.title("Input Layer")
+plt.xlabel("Time step")
+plt.ylabel("Neuron Number")
+plt.show()
+
+
+idx = 210  # index into 210th neuron
+
+fig = plt.figure(facecolor="w", figsize=(8, 1))
+ax = fig.add_subplot(111)
+
+splt.raster(spike_data_sample.reshape(num_steps, -1)[:, idx].unsqueeze(1), ax, s=100, c="black", marker="|")
+
+plt.title("Input Neuron")
+plt.xlabel("Time step")
+plt.yticks([])
+plt.show()
+
+
+def convert_to_time(data, tau=5, threshold=0.01):
+  spike_time = tau * torch.log(data / (data - threshold))
+  return spike_time
+
+raw_input = torch.arange(0, 5, 0.05) # tensor from 0 to 5
+spike_times = convert_to_time(raw_input)
+
+plt.plot(raw_input, spike_times)
+plt.xlabel('Input Value')
+plt.ylabel('Spike Time (s)')
+plt.show()
+
+spike_data = spikegen.latency(data_it, num_steps=100, tau=5, threshold=0.01)
