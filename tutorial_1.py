@@ -116,3 +116,95 @@ plt.ylabel('Spike Time (s)')
 plt.show()
 
 spike_data = spikegen.latency(data_it, num_steps=100, tau=5, threshold=0.01)
+
+fig = plt.figure(facecolor="w", figsize=(10, 5))
+ax = fig.add_subplot(111)
+splt.raster(spike_data[:, 0].view(num_steps, -1), ax, s=25, c="black")
+
+plt.title("Input Layer")
+plt.xlabel("Time step")
+plt.ylabel("Neuron Number")
+plt.show()
+
+# optional save
+# fig.savefig('destination_path.png', format='png', dpi=300)
+
+spike_data = spikegen.latency(data_it, num_steps=100, tau=5, threshold=0.01,
+                              normalize=True, linear=True)
+
+fig = plt.figure(facecolor="w", figsize=(10, 5))
+ax = fig.add_subplot(111)
+splt.raster(spike_data[:, 0].view(num_steps, -1), ax, s=25, c="black")
+
+plt.title("Input Layer")
+plt.xlabel("Time step")
+plt.ylabel("Neuron Number")
+plt.show()
+
+
+spike_data = spikegen.latency(data_it, num_steps=100, tau=5, threshold=0.01,
+                              clip=True, normalize=True, linear=True)
+
+fig = plt.figure(facecolor="w", figsize=(10, 5))
+ax = fig.add_subplot(111)
+splt.raster(spike_data[:, 0].view(num_steps, -1), ax, s=25, c="black")
+
+plt.title("Input Layer")
+plt.xlabel("Time step")
+plt.ylabel("Neuron Number")
+plt.show()
+
+spike_data_sample = spike_data[:, 0, 0]
+print(spike_data_sample.size())
+fig, ax = plt.subplots()
+anim = splt.animator(spike_data_sample, fig, ax)
+
+#HTML(anim.to_html5_video())
+anim.save("mnist_latency.gif")
+
+
+# Create a tensor with some fake time-series data
+data = torch.Tensor([0, 1, 0, 2, 8, -20, 20, -5, 0, 1, 0])
+
+# Plot the tensor
+plt.plot(data)
+
+plt.title("Some fake time-series data")
+plt.xlabel("Time step")
+plt.ylabel("Voltage (mV)")
+plt.show()
+
+# Convert data
+spike_data = spikegen.delta(data, threshold=4)
+
+# Create fig, ax
+fig = plt.figure(facecolor="w", figsize=(8, 1))
+ax = fig.add_subplot(111)
+
+# Raster plot of delta converted data
+splt.raster(spike_data, ax, c="black")
+
+plt.title("Input Neuron")
+plt.xlabel("Time step")
+plt.yticks([])
+plt.xlim(0, len(data))
+plt.show()
+
+
+# Convert data
+spike_data = spikegen.delta(data, threshold=4, off_spike=True)
+
+# Create fig, ax
+fig = plt.figure(facecolor="w", figsize=(8, 1))
+ax = fig.add_subplot(111)
+
+# Raster plot of delta converted data
+splt.raster(spike_data, ax, c="black")
+
+plt.title("Input Neuron")
+plt.xlabel("Time step")
+plt.yticks([])
+plt.xlim(0, len(data))
+plt.show()
+
+print(spike_data)
